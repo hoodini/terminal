@@ -184,6 +184,8 @@ try
 {
     // Store the bidi level if we have a corresponding script analysis result
     // This helps with proper RTL text rendering
+    // Note: AnalyzeScript is called before AnalyzeBidi in AtlasEngine::_mapComplex,
+    // so results should already exist when this method is called
     for (auto& result : _results)
     {
         if (result.textPosition == textPosition && result.textLength == textLength)

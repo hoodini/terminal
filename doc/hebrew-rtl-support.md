@@ -75,5 +75,5 @@ Potential areas for future improvement:
 ## References
 
 - [Unicode Hebrew Block](https://www.unicode.org/charts/PDF/U0590.pdf)
-- [DirectWrite BiDi Documentation](https://docs.microsoft.com/en-us/windows/win32/directwrite/bidirectional-and-vertical-text)
+- [DirectWrite BiDi Documentation](https://learn.microsoft.com/en-us/windows/win32/directwrite/bidirectional-and-vertical-text)
 - [Unicode Bidirectional Algorithm](https://unicode.org/reports/tr9/)
