@@ -100,10 +100,9 @@ DWRITE_READING_DIRECTION TextAnalysisSource::GetParagraphReadingDirection() noex
             return DWRITE_READING_DIRECTION_LEFT_TO_RIGHT;
         }
         
-        // Check for strong RTL characters (Hebrew and common RTL scripts)
+        // Check for strong RTL characters (Hebrew and Arabic)
         // Hebrew:        U+0590–U+05FF
         // Arabic:        U+0600–U+06FF
-        // Arabic Ext-A:  U+08A0–U+08FF
         if (ch >= 0x0590 && ch <= 0x06FF)
         {
             return DWRITE_READING_DIRECTION_RIGHT_TO_LEFT;

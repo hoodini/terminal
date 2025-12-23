@@ -69,7 +69,6 @@ The implementation supports RTL characters in the following Unicode ranges:
   - Arabic letters
   - Arabic punctuation
   - Arabic vowel marks
-- Hebrew vowel points and cantillation marks
 
 ## Technical Notes
 
