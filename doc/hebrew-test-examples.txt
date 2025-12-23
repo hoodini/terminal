@@ -1,0 +1,39 @@
+// Test file demonstrating Hebrew RTL support
+// This file can be used to verify Hebrew text rendering in Windows Terminal
+
+// Hebrew text examples for testing
+
+// 1. Simple Hebrew text
+// שלום עולם (Hello World)
+
+// 2. Hebrew with numbers
+// מספר 123 (Number 123)
+
+// 3. Hebrew with English mixed
+// This is English and this is עברית (Hebrew)
+
+// 4. Full Hebrew sentence
+// זהו משפט בעברית עם מילים רבות (This is a sentence in Hebrew with many words)
+
+// 5. Hebrew alphabet
+// אבגדהוזחטיכלמנסעפצקרשת
+
+// 6. Hebrew with punctuation
+// שלום! איך אתה? (Hello! How are you?)
+
+// Testing guidelines:
+// 1. Open this file in Windows Terminal
+// 2. Verify that Hebrew text displays from right to left
+// 3. Check that mixed Hebrew/English text renders correctly
+// 4. Verify cursor movement works as expected
+
+// Expected behavior:
+// - Hebrew text should align right-to-left
+// - English text should remain left-to-right
+// - Mixed text should handle BiDi correctly
+// - Cursor should move appropriately for each direction
+
+// Test commands (for terminal):
+// echo "שלום עולם"
+// echo "Hello עולם"
+// cat hebrew-test-examples.txt
