@@ -2,9 +2,11 @@
 
 [![Terminal Build Status](https://dev.azure.com/shine-oss/terminal/_apis/build/status%2FTerminal%20CI?branchName=main)](https://dev.azure.com/shine-oss/terminal/_build/latest?definitionId=1&branchName=main)
 
-# Windows Terminal with Hebrew RTL Support
+# YUV AI Terminal
 
-A fork of Windows Terminal with native **Right-to-Left (RTL) support for Hebrew**.
+### By [Yuval Avidani](https://github.com/hoodini) ⭐ GitHub Star | 🚀 AI Builder @ [YUV.AI](https://yuv.ai)
+
+A fork of Windows Terminal with native **Right-to-Left (RTL) support for Hebrew** 🇮🇱
 
 ## ✨ What's New: Hebrew RTL Support
 
@@ -148,6 +150,10 @@ terminal/
 
 ## 🔗 Links
 
-- [Official Docs](https://aka.ms/terminal-docs)
-- [Original Repo](https://github.com/microsoft/terminal)
-- [Report Issues](https://github.com/hoodini/terminal/issues)
+- [YUV.AI](https://yuv.ai)
+- [Yuval on GitHub](https://github.com/hoodini)
+- [Yuval on X/Twitter](https://x.com/yuvalav)
+- [Yuval on LinkedIn](https://www.linkedin.com/in/%F0%9F%8E%97%EF%B8%8Fyuval-avidani-87081474/)
+- [YouTube @yuv-ai](https://www.youtube.com/@yuv-ai)
+- [Official Terminal Docs](https://aka.ms/terminal-docs)
+- [Original Microsoft Repo](https://github.com/microsoft/terminal)
