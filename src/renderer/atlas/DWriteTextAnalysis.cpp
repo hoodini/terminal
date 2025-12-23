@@ -85,19 +85,32 @@ HRESULT TextAnalysisSource::GetTextBeforePosition(UINT32 textPosition, const WCH
 
 DWRITE_READING_DIRECTION TextAnalysisSource::GetParagraphReadingDirection() noexcept
 {
-    // Check if the text contains Hebrew characters
-    // Hebrew Unicode range: U+0590 to U+05FF
+    // Determine paragraph direction using a "first strong character" heuristic
+    // based on the Unicode Bidirectional Algorithm (UAX #9).
+    // We scan from the start and return as soon as we find a strong
+    // left-to-right (L) or right-to-left (R/AL) character.
+    
     for (UINT32 i = 0; i < _textLength; ++i)
     {
         const wchar_t ch = _text[i];
-        if (ch >= 0x0590 && ch <= 0x05FF)
+        
+        // Check for strong LTR characters (Basic Latin letters)
+        if ((ch >= L'A' && ch <= L'Z') || (ch >= L'a' && ch <= L'z'))
         {
-            // Hebrew character detected, use RTL
+            return DWRITE_READING_DIRECTION_LEFT_TO_RIGHT;
+        }
+        
+        // Check for strong RTL characters (Hebrew and common RTL scripts)
+        // Hebrew:        U+0590–U+05FF
+        // Arabic:        U+0600–U+06FF
+        // Arabic Ext-A:  U+08A0–U+08FF
+        if (ch >= 0x0590 && ch <= 0x06FF)
+        {
             return DWRITE_READING_DIRECTION_RIGHT_TO_LEFT;
         }
     }
     
-    // Default to LTR for other text
+    // Default to LTR if no strong directional character is found
     return DWRITE_READING_DIRECTION_LEFT_TO_RIGHT;
 }
 
@@ -182,21 +195,27 @@ HRESULT TextAnalysisSink::SetLineBreakpoints(UINT32 textPosition, UINT32 textLen
 HRESULT TextAnalysisSink::SetBidiLevel(UINT32 textPosition, UINT32 textLength, UINT8 explicitLevel, UINT8 resolvedLevel) noexcept
 try
 {
-    // Store the bidi level if we have a corresponding script analysis result
-    // This helps with proper RTL text rendering
-    // Note: AnalyzeScript is called before AnalyzeBidi in AtlasEngine::_mapComplex,
-    // so results should already exist when this method is called
+    // Store the bidi level for all script analysis results that overlap the
+    // BiDi run range. DirectWrite's AnalyzeBidi can segment text differently
+    // from AnalyzeScript, so we cannot rely on exact (textPosition, textLength)
+    // matches between the two analyses.
+    const UINT32 bidiRunStart = textPosition;
+    const UINT32 bidiRunEnd = textPosition + textLength;
+    
     for (auto& result : _results)
     {
-        if (result.textPosition == textPosition && result.textLength == textLength)
+        const UINT32 resultStart = result.textPosition;
+        const UINT32 resultEnd = result.textPosition + result.textLength;
+        
+        // Apply the resolved level to any result whose range overlaps the
+        // BiDi run range [bidiRunStart, bidiRunEnd).
+        if (bidiRunStart < resultEnd && bidiRunEnd > resultStart)
         {
             result.bidiLevel = resolvedLevel;
-            return S_OK;
         }
     }
     
-    // If no matching result was found, this is unexpected but not an error
-    // The bidi information will be lost, but the text will still render (without bidi)
+    // Even if no overlapping result was found, this is not treated as an error
     return S_OK;
 }
 CATCH_RETURN()
