@@ -86,7 +86,7 @@ HRESULT TextAnalysisSource::GetTextBeforePosition(UINT32 textPosition, const WCH
 DWRITE_READING_DIRECTION TextAnalysisSource::GetParagraphReadingDirection() noexcept
 {
     // Check if the text contains Hebrew characters
-    // Hebrew Unicode range is U+0590 to U+05FF
+    // Hebrew Unicode range: U+0590 to U+05FF
     for (UINT32 i = 0; i < _textLength; ++i)
     {
         const wchar_t ch = _text[i];
