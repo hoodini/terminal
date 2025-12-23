@@ -191,9 +191,12 @@ try
         if (result.textPosition == textPosition && result.textLength == textLength)
         {
             result.bidiLevel = resolvedLevel;
-            break;
+            return S_OK;
         }
     }
+    
+    // If no matching result was found, this is unexpected but not an error
+    // The bidi information will be lost, but the text will still render (without bidi)
     return S_OK;
 }
 CATCH_RETURN()
