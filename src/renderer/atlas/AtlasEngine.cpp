@@ -1031,6 +1031,9 @@ void AtlasEngine::_mapComplex(IDWriteFontFace2* mappedFontFace, u32 idx, u32 len
     TextAnalysisSource analysisSource{ _p.userLocaleName.c_str(), _api.bufferLine.data(), gsl::narrow<UINT32>(_api.bufferLine.size()) };
     TextAnalysisSink analysisSink{ _api.analysisResults };
     THROW_IF_FAILED(_p.textAnalyzer->AnalyzeScript(&analysisSource, idx, length, &analysisSink));
+    
+    // Analyze bidirectional text for proper RTL support
+    THROW_IF_FAILED(_p.textAnalyzer->AnalyzeBidi(&analysisSource, idx, length, &analysisSink));
 
     for (const auto& a : _api.analysisResults)
     {

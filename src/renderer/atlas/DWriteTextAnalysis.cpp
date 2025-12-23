@@ -85,6 +85,31 @@ HRESULT TextAnalysisSource::GetTextBeforePosition(UINT32 textPosition, const WCH
 
 DWRITE_READING_DIRECTION TextAnalysisSource::GetParagraphReadingDirection() noexcept
 {
+    // Determine paragraph direction using a "first strong character" heuristic
+    // based on the Unicode Bidirectional Algorithm (UAX #9).
+    // We scan from the start and return as soon as we find a strong
+    // left-to-right (L) or right-to-left (R/AL) character.
+    
+    for (UINT32 i = 0; i < _textLength; ++i)
+    {
+        const wchar_t ch = _text[i];
+        
+        // Check for strong LTR characters (Basic Latin letters)
+        if ((ch >= L'A' && ch <= L'Z') || (ch >= L'a' && ch <= L'z'))
+        {
+            return DWRITE_READING_DIRECTION_LEFT_TO_RIGHT;
+        }
+        
+        // Check for strong RTL characters (Hebrew and Arabic)
+        // Hebrew:        U+0590–U+05FF
+        // Arabic:        U+0600–U+06FF
+        if (ch >= 0x0590 && ch <= 0x06FF)
+        {
+            return DWRITE_READING_DIRECTION_RIGHT_TO_LEFT;
+        }
+    }
+    
+    // Default to LTR if no strong directional character is found
     return DWRITE_READING_DIRECTION_LEFT_TO_RIGHT;
 }
 
@@ -167,9 +192,32 @@ HRESULT TextAnalysisSink::SetLineBreakpoints(UINT32 textPosition, UINT32 textLen
 }
 
 HRESULT TextAnalysisSink::SetBidiLevel(UINT32 textPosition, UINT32 textLength, UINT8 explicitLevel, UINT8 resolvedLevel) noexcept
+try
 {
-    return E_NOTIMPL;
+    // Store the bidi level for all script analysis results that overlap the
+    // BiDi run range. DirectWrite's AnalyzeBidi can segment text differently
+    // from AnalyzeScript, so we cannot rely on exact (textPosition, textLength)
+    // matches between the two analyses.
+    const UINT32 bidiRunStart = textPosition;
+    const UINT32 bidiRunEnd = textPosition + textLength;
+    
+    for (auto& result : _results)
+    {
+        const UINT32 resultStart = result.textPosition;
+        const UINT32 resultEnd = result.textPosition + result.textLength;
+        
+        // Apply the resolved level to any result whose range overlaps the
+        // BiDi run range [bidiRunStart, bidiRunEnd).
+        if (bidiRunStart < resultEnd && bidiRunEnd > resultStart)
+        {
+            result.bidiLevel = resolvedLevel;
+        }
+    }
+    
+    // Even if no overlapping result was found, this is not treated as an error
+    return S_OK;
 }
+CATCH_RETURN()
 
 HRESULT TextAnalysisSink::SetNumberSubstitution(UINT32 textPosition, UINT32 textLength, IDWriteNumberSubstitution* numberSubstitution) noexcept
 {
