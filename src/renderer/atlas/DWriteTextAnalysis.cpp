@@ -85,6 +85,19 @@ HRESULT TextAnalysisSource::GetTextBeforePosition(UINT32 textPosition, const WCH
 
 DWRITE_READING_DIRECTION TextAnalysisSource::GetParagraphReadingDirection() noexcept
 {
+    // Check if the text contains Hebrew characters
+    // Hebrew Unicode range is U+0590 to U+05FF
+    for (UINT32 i = 0; i < _textLength; ++i)
+    {
+        const wchar_t ch = _text[i];
+        if (ch >= 0x0590 && ch <= 0x05FF)
+        {
+            // Hebrew character detected, use RTL
+            return DWRITE_READING_DIRECTION_RIGHT_TO_LEFT;
+        }
+    }
+    
+    // Default to LTR for other text
     return DWRITE_READING_DIRECTION_LEFT_TO_RIGHT;
 }
 
@@ -167,9 +180,21 @@ HRESULT TextAnalysisSink::SetLineBreakpoints(UINT32 textPosition, UINT32 textLen
 }
 
 HRESULT TextAnalysisSink::SetBidiLevel(UINT32 textPosition, UINT32 textLength, UINT8 explicitLevel, UINT8 resolvedLevel) noexcept
+try
 {
-    return E_NOTIMPL;
+    // Store the bidi level if we have a corresponding script analysis result
+    // This helps with proper RTL text rendering
+    for (auto& result : _results)
+    {
+        if (result.textPosition == textPosition && result.textLength == textLength)
+        {
+            result.bidiLevel = resolvedLevel;
+            break;
+        }
+    }
+    return S_OK;
 }
+CATCH_RETURN()
 
 HRESULT TextAnalysisSink::SetNumberSubstitution(UINT32 textPosition, UINT32 textLength, IDWriteNumberSubstitution* numberSubstitution) noexcept
 {

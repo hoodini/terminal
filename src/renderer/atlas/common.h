@@ -313,6 +313,7 @@ namespace Microsoft::Console::Render::Atlas
         uint32_t textPosition;
         uint32_t textLength;
         DWRITE_SCRIPT_ANALYSIS analysis;
+        uint8_t bidiLevel = 0;  // Bidi level for RTL support
     };
 
     enum class GraphicsAPI
